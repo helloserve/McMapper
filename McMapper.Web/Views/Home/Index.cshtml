@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "Minecraft by helloserve";
+}
+@section scriptsHead{
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCskCs5kzF8MGrouyDDcHSoe8Ky_Vv8EE">
+    </script>
+    <script type="text/javascript">
+        mcTileProjection = function () {
+            this._minX = -20;
+            this._maxX = 20;
+            this._minY = -20;
+            this._maxY = 20;
+
+            this.latRatio = this._minY / 85;
+            this.lngRatio = this._minX / 180;
+        }
+
+        mcTileProjection.prototype.fromLatLngToPoint = function (latlng) {
+            var y = latlng.lat() * this.latRatio;
+            var x = latlng.lng() * this.lngRatio;
+
+            //var projection = "<div>fromLatLng (" + latlng.lng() + ", " + latlng.lat() + ") to (" + x + ", " + y + ")</div>"
+            //$('#projectionLog').append(projection);
+            //var objDiv = document.getElementById("projectionLog");
+            //objDiv.scrollTop = objDiv.scrollHeight;
+
+            return new google.maps.Point(x, y);
+        }
+
+        mcTileProjection.prototype.fromPointToLatLng = function (pixel, noWrap) {
+            var yRatio = pixel.y / this._minY;
+            var lat = 85 * yRatio;
+
+            var xRatio = pixel.x / this._minX;
+            var lng = (180 * xRatio);
+
+            //var projection = "<div>fromX__Y__ (" + pixel.x + ", " + pixel.y + ") to (" + lng + ", " + lat + ")</div>"
+            //$('#projectionLog').append(projection);
+            //var objDiv = document.getElementById("projectionLog");
+            //objDiv.scrollTop = objDiv.scrollHeight;
+
+            return new google.maps.LatLng(lat, lng, noWrap);
+        }
+
+        var mcTileTypeOptions = {
+            getTileUrl: function (coord, zoom) {
+                $('#coordinates').text(coord.x + ", " + coord.y);
+                return baseUrl + "tile/" + zoom + "/" + coord.x + "/" + coord.y;
+            },
+            tileSize: new google.maps.Size(256, 256),
+            maxZoom: 3,
+            minZoom: 1,
+            name: "MCTile"
+        };
+
+        var mcTileMapType = new google.maps.ImageMapType(mcTileTypeOptions);
+        mcTileMapType.projection = new mcTileProjection();
+
+        function initialize() {
+            var mapOptions = {
+                center: { lat: 0, lng: 0 },
+                zoom: 3,
+                mapTypeControlOptions: {
+                    mapTypeIds: [google.maps.MapTypeId.ROADMAP, "mctile"]
+                }
+            };
+
+            var map = new google.maps.Map(document.getElementById('mapCanvas'),
+                mapOptions);
+
+            map.mapTypes.set('mctile', mcTileMapType);
+            map.setMapTypeId('mctile');
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+}
+<div id="mapCanvas" class="map">
+    <div style="float:left; position:absolute; z-index:5">
+        <h2>Minecraft by helloserve</h2>
+
+        <div>
+            Current Coordinates: <span id="coordinates">0, 0</span>
+        </div>
+    </div>
+</div>
