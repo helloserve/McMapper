@@ -7,7 +7,7 @@ Chunky has a base texture pack which is not compatible with later versions of Mi
 
 Project Settings - 
 1. .nuget and associated packages not included - please Enable Nuget to download missing references.
-2. Services contains multiple app.config files based on build configuration, hacked in the csproj file to transforms and build accordingly.
+2. Services contains multiple app.config files based on build configuration, hacked in the csproj files to transform and build accordingly to selection.
 
 Project Components - 
 1. McMapper.MinecraftService is a service hosting and managing the Minecraft server JAR process
